@@ -27,9 +27,9 @@ nix flake show github:bastiion/nix-blazegraph/main
 
 ## Non nix environment
 
-using docker:
+using docker assuming your data is in the current working directory under `data`:
 
 ```
-docker run -ti -v ./:/nix/ -p 9999:9999 johannesloetzsch/nix-flake nix run github:bastiion/nix-blazegraph#startBlazegraph
+docker run -ti -v nix:/nix/ -v $(pwd)/data:/data -w /data -p 9999:9999 johannesloetzsch/nix-flake nix run github:bastiion/nix-blazegraph#startBlazegraph
 ```
 
