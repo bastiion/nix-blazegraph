@@ -15,16 +15,8 @@ com.bigdata.rdf.store.AbstractTripleStore.quads=false
 com.bigdata.rdf.store.AbstractTripleStore.axiomsClass=com.bigdata.rdf.axioms.NoAxioms
 #Files to load
 baseURI=http://ontology.gra.one
-fileOrDirs=$1
 propertyFile=$PROPFILE
 EOT
 
-java -server -Xmx4g -Dcom.bigdata.rdf.sail.webapp.ConfigParams.propertyFile=$PROPFILE -Djetty.port=9999 -jar $BLAZEGRAPH_JAR &
+java -Xmx6g -cp $BLAZEGRAPH_JAR com.bigdata.rdf.sail.ExportKB -outdir $1 -format N-Quads $PROPFILE
 
-BLAZEGRAPH_PID=$!
-
-#trap "kill $BLAZEGRAPH_PID ; rm -f $PROPFILE" EXIT
-
-sleep 5
-
-curl --data-binary @$PROPFILE --header 'Content-Type:text/plain' http://localhost:9999/blazegraph/dataloader

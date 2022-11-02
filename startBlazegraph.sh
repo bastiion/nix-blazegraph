@@ -10,6 +10,7 @@ verbose=2
 # namespace=kb
 com.bigdata.journal.AbstractJournal.file=blazegraph.jnl
 com.bigdata.rdf.store.AbstractTripleStore.quads=false
+com.bigdata.rdf.store.AbstractTripleStore.axiomsClass=com.bigdata.rdf.axioms.OwlAxioms
 #Files to load
 baseURI=http://ontology.gra.one
 fileOrDirs=$1

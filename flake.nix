@@ -6,6 +6,7 @@
   outputs = { self, nixpkgs }: let
       system = "x86_64-linux";
       pkgs = import nixpkgs { inherit system; };
+      buildInputs = with pkgs; [ makeWrapper curl jdk8 ];
   in {
     packages.${system} = rec {
       blazegraphJar = pkgs.fetchurl {
@@ -14,7 +15,7 @@
         sha256 = "043nfc6mgmd5mxmwfcfl082y96iaqnwminn4rxbizxrs3dzaxbpv";
       };
       bootstrapBlazegraph = pkgs.runCommand "bootstrapBlazegraph" {
-        buildInputs = with pkgs; [ makeWrapper curl jdk8 ];
+          inherit buildInputs;
         } ''
           mkdir -p $out/bin
           cp ${./bootstrapBlazegraph.sh} $out/bin/bootstrapBlazegraph
@@ -22,11 +23,27 @@
               --prefix PATH : $PATH --prefix BLAZEGRAPH_JAR : ${blazegraphJar}
         '';
       runBlazegraph = pkgs.runCommand "startBlazegraph" {
-           buildInputs = with pkgs; [ makeWrapper curl openjdk ];
+          inherit buildInputs;
       } ''
          mkdir -p $out/bin
          cp ${./startBlazegraph.sh} $out/bin/startBlazegraph
          wrapProgram "$out/bin/startBlazegraph" \
+             --prefix PATH : $PATH --prefix BLAZEGRAPH_JAR : ${blazegraphJar}
+       '';
+      load = pkgs.runCommand "dataloader" {
+          inherit buildInputs;
+      } ''
+         mkdir -p $out/bin
+         cp ${./dataloader.sh} $out/bin/dataloader
+         wrapProgram "$out/bin/dataloader" \
+             --prefix PATH : $PATH --prefix BLAZEGRAPH_JAR : ${blazegraphJar}
+       '';
+      export = pkgs.runCommand "dataexporter" {
+          inherit buildInputs;
+      } ''
+         mkdir -p $out/bin
+         cp ${./dataexporter.sh} $out/bin/dataexporter
+         wrapProgram "$out/bin/dataexporter" \
              --prefix PATH : $PATH --prefix BLAZEGRAPH_JAR : ${blazegraphJar}
        '';
     };
